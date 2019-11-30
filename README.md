@@ -6,7 +6,7 @@ The analytics team for music streaming startup Spakify wants to anaylze the song
 
 ## Objective
 
-The goal of this project is to design a database schema and create an ETL pipeline that enters data from the activity and song metadata JSON files, and deliver tables in a Postgres database against which the analtyics team can run optimized queries for performing song play anaysis.
+The goal of this project is to design a database schema and create an ETL pipeline that enters data from the activity and song metadata JSON files, and deliver tables in a Postgres database against which the analtyics team can run optimized queries for performing song play analysis.
 
 ## Data model
 
@@ -17,16 +17,16 @@ The goal of this project is to design a database schema and create an ETL pipeli
 <ol>
 <li>Process song files</li>
 <ol>
-<li>Insert unique song records</li>
-<li>Insert unique artist records</li>
+<li>Insert unique <b>songs</b> records</li>
+<li>Insert unique <b>artists</b> records</li>
 </ol>
 </li>
 <li>Process log files</li>
 <ol>
 <li>Filter by "NextSong" action</li>
-<li>Insert time records</li>
+<li>Insert <b>time</b> records</li>
 <li>Insert unique user records</li>
-<li>Insert songplay records, getting songid and artistid from song and artist tables, respetively</li>
+<li>Insert <b>songplays</b> records, getting songid and artistid from <b>songs</b> and <b>artists</b> tables, respetively</li>
 </ol>
 </ol> 
 
