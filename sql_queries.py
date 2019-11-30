@@ -11,11 +11,11 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (
     songplay_id SERIAL PRIMARY KEY,
-    start_time TIMESTAMP,
-    user_id INTEGER,
+    start_time TIMESTAMP NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users (user_id),
     level VARCHAR(10),
-    song_id VARCHAR(20),
-    artist_id VARCHAR(20),
+    song_id TEXT REFERENCES songs (song_id),
+    artist_id TEXT REFERENCES artists (artist_id),
     session_id INTEGER,
     location VARCHAR(100),
     user_agent VARCHAR(200)
@@ -34,17 +34,17 @@ CREATE TABLE IF NOT EXISTS users (
 
 song_table_create = ("""
 CREATE TABLE IF NOT EXISTS songs (
-    song_id VARCHAR(20) PRIMARY KEY,
+    song_id TEXT PRIMARY KEY,
     title VARCHAR(100),
-    artist_id VARCHAR(20) NOT NULL,
+    artist_id TEXT NOT NULL REFERENCES artists (artist_id),
     year INTEGER,
-    duration NUMERIC(8,5)
+    duration FLOAT
 );
 """)
 
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists (
-    artist_id VARCHAR(20) PRIMARY KEY,
+    artist_id TEXT PRIMARY KEY,
     name VARCHAR(100),
     location VARCHAR(100),
     latitude NUMERIC(8,6),
@@ -67,9 +67,9 @@ CREATE TABLE IF NOT EXISTS time (
 # INSERT RECORDS
 
 songplay_table_insert = ("""
-INSERT INTO songplays (songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-ON CONFLICT(songplay_id) DO NOTHING;
+INSERT INTO songplays (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+ON CONFLICT DO NOTHING;
 """)
 
 user_table_insert = ("""
@@ -107,5 +107,5 @@ WHERE s.title=(%s) AND a.name=(%s) AND s.duration=(%s);
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [user_table_create, artist_table_create, song_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]

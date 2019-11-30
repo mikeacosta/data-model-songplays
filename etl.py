@@ -8,14 +8,14 @@ from sql_queries import *
 def process_song_file(cur, filepath):
     # open song file
     df = df = pd.read_json(filepath, lines=True)
-
-    # insert song record
-    song_data = df[["song_id", "title", "artist_id", "year", "duration"]].values[0].tolist()
-    cur.execute(song_table_insert, song_data)
     
     # insert artist record
     artist_data = df[["artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude"]].values[0].tolist()
     cur.execute(artist_table_insert, artist_data)
+
+    # insert song record
+    song_data = df[["song_id", "title", "artist_id", "year", "duration"]].values[0].tolist()
+    cur.execute(song_table_insert, song_data)    
 
 
 def process_log_file(cur, filepath):
@@ -46,14 +46,19 @@ def process_log_file(cur, filepath):
     # insert songplay records
     for index, row in df.iterrows():
         # get songid and artistid from song and artist tables
-        results = cur.execute(song_select, (row.song, row.artist, row.length))
-        songid, artistid = results if results else None, None
+        cur.execute(song_select, (row.song, row.artist, row.length))
+        results = cur.fetchone()
+
+        if results:
+           songid, artistid = results
+        else:
+           songid, artistid = None, None
 
         # convert timestamp column to datetime
         starttime = pd.to_datetime(row.ts, unit='ms')
 
         # insert songplay record
-        songplay_data = (index, starttime, row.userId, row.level, songid, artistid, row.sessionId,\
+        songplay_data = (starttime, row.userId, row.level, songid, artistid, row.sessionId,\
             row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
